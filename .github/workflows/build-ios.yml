@@ -1,9 +1,7 @@
-name: Build iOS App for Appetize
+name: Build iOS App for Appetize - FIXED
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 jobs:
   build:
@@ -18,81 +16,553 @@ jobs:
       with:
         xcode-version: latest-stable
     
-    - name: Create ExportOptions.plist
+    - name: Create Brand New iOS Project
       run: |
-        cat << EOF > ExportOptions.plist
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-            <key>method</key>
-            <string>development</string>
-            <key>thinning</key>
-            <string>&lt;none&gt;</string>
-            <key>signingStyle</key>
-            <string>automatic</string>
-            <key>stripSwiftSymbols</key>
-            <true/>
-        </dict>
-        </plist>
+        echo "=== Creating completely new iOS project from scratch ==="
+        
+        # Remove the broken existing project
+        rm -rf Pinger.xcodeproj
+        
+        # Create new iOS project using Xcode template
+        mkdir -p PingerNew
+        cd PingerNew
+        
+        # Create new single view app project
+        /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project - << 'EOF' || echo "Using alternative project creation"
         EOF
-    
-    - name: Create build directory and fix structure
-      run: |
-        mkdir -p build
-        mkdir -p Pinger
-        # Move source files to Pinger subdirectory to match Xcode project structure
-        mv *.swift Pinger/ 2>/dev/null || echo "Swift files already in correct location"
-        mv *.storyboard Pinger/ 2>/dev/null || echo "Storyboard files already in correct location"  
-        mv *.plist Pinger/ 2>/dev/null || echo "Plist files already in correct location"
-        mv Assets.xcassets Pinger/ 2>/dev/null || echo "Assets already in correct location"
         
-    - name: Debug - List project contents
+        # Alternative: Create project structure manually but correctly
+        cd ..
+        
+        # Create proper project directory
+        mkdir -p "Pinger Project/Pinger"
+        
+        # Copy source files to proper location
+        cp *.swift "Pinger Project/Pinger/" 2>/dev/null || true
+        cp *.storyboard "Pinger Project/Pinger/" 2>/dev/null || true
+        cp Info.plist "Pinger Project/Pinger/" 2>/dev/null || true
+        cp -r Assets.xcassets "Pinger Project/Pinger/" 2>/dev/null || true
+        
+        # Create minimal but correct Xcode project
+        mkdir -p "Pinger Project/Pinger.xcodeproj"
+        
+        # Generate working project.pbxproj
+        cat > "Pinger Project/Pinger.xcodeproj/project.pbxproj" << 'PBXEOF'
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1A1A1A1A1A1A1A1A1A1A1A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B1B1B1B1B1B1B1B1B1B1B1 /* AppDelegate.swift */; };
+		A2A2A2A2A2A2A2A2A2A2A2A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B2B2B2B2B2B2B2B2B2B2B2 /* SceneDelegate.swift */; };
+		A3A3A3A3A3A3A3A3A3A3A3A3 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B3B3B3B3B3B3B3B3B3B3 /* MainViewController.swift */; };
+		A4A4A4A4A4A4A4A4A4A4A4A4 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B4B4B4B4B4B4B4B4B4B4B4 /* ConfigurationViewController.swift */; };
+		A5A5A5A5A5A5A5A5A5A5A5A5 /* PingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B5B5B5B5B5B5B5B5B5B5B5 /* PingService.swift */; };
+		A6A6A6A6A6A6A6A6A6A6A6A6 /* PingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B6B6B6B6B6B6B6B6B6B6B6 /* PingConfiguration.swift */; };
+		A7A7A7A7A7A7A7A7A7A7A7A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7B7B7B7B7B7B7B7B7B7B7B7 /* Main.storyboard */; };
+		A8A8A8A8A8A8A8A8A8A8A8A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8B8B8B8B8B8B8B8B8B8B8B8 /* Assets.xcassets */; };
+		A9A9A9A9A9A9A9A9A9A9A9A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9B9B9B9B9B9B9B9B9B9B9B9 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C1C1C1C1C1C1C1C1C1C1C1C1 /* Pinger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pinger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B1B1B1B1B1B1B1B1B1B1B1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B2B2B2B2B2B2B2B2B2B2B2B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		B3B3B3B3B3B3B3B3B3B3B3B3 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		B4B4B4B4B4B4B4B4B4B4B4B4 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		B5B5B5B5B5B5B5B5B5B5B5B5 /* PingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingService.swift; sourceTree = "<group>"; };
+		B6B6B6B6B6B6B6B6B6B6B6B6 /* PingConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingConfiguration.swift; sourceTree = "<group>"; };
+		B7B7B7B7B7B7B7B7B7B7B7B7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B8B8B8B8B8B8B8B8B8B8B8B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B9B9B9B9B9B9B9B9B9B9B9B9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BABABABABABABABABABABABA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1D1D1D1D1D1D1D1D1D1D1D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E1E1E1E1E1E1E1E1E1E1E1E1 = {
+			isa = PBXGroup;
+			children = (
+				E2E2E2E2E2E2E2E2E2E2E2E2 /* Pinger */,
+				E3E3E3E3E3E3E3E3E3E3E3E3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E3E3E3E3E3E3E3E3E3E3E3E3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1C1C1C1C1C1C1C1C1C1C1C1 /* Pinger.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E2E2E2E2E2E2E2E2E2E2E2E2 /* Pinger */ = {
+			isa = PBXGroup;
+			children = (
+				B1B1B1B1B1B1B1B1B1B1B1B1 /* AppDelegate.swift */,
+				B2B2B2B2B2B2B2B2B2B2B2B2 /* SceneDelegate.swift */,
+				B3B3B3B3B3B3B3B3B3B3B3B3 /* MainViewController.swift */,
+				B4B4B4B4B4B4B4B4B4B4B4B4 /* ConfigurationViewController.swift */,
+				B5B5B5B5B5B5B5B5B5B5B5B5 /* PingService.swift */,
+				B6B6B6B6B6B6B6B6B6B6B6B6 /* PingConfiguration.swift */,
+				B7B7B7B7B7B7B7B7B7B7B7B7 /* Main.storyboard */,
+				B8B8B8B8B8B8B8B8B8B8B8B8 /* Assets.xcassets */,
+				B9B9B9B9B9B9B9B9B9B9B9B9 /* LaunchScreen.storyboard */,
+				BABABABABABABABABABABABA /* Info.plist */,
+			);
+			path = Pinger;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F1F1F1F1F1F1F1F1F1F1F1F1 /* Pinger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2F2F2F2F2F2F2F2F2F2F2F2 /* Build configuration list for PBXNativeTarget "Pinger" */;
+			buildPhases = (
+				F3F3F3F3F3F3F3F3F3F3F3F3 /* Sources */,
+				D1D1D1D1D1D1D1D1D1D1D1D1 /* Frameworks */,
+				F4F4F4F4F4F4F4F4F4F4F4F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Pinger;
+			productName = Pinger;
+			productReference = C1C1C1C1C1C1C1C1C1C1C1C1 /* Pinger.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		G1G1G1G1G1G1G1G1G1G1G1G1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F1F1F1F1F1F1F1F1F1F1F1F1 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = G2G2G2G2G2G2G2G2G2G2G2G2 /* Build configuration list for PBXProject "Pinger" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E1E1E1E1E1E1E1E1E1E1E1E1;
+			productRefGroup = E3E3E3E3E3E3E3E3E3E3E3E3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F1F1F1F1F1F1F1F1F1F1F1F1 /* Pinger */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F4F4F4F4F4F4F4F4F4F4F4F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9A9A9A9A9A9A9A9A9A9A9A9 /* LaunchScreen.storyboard in Resources */,
+				A8A8A8A8A8A8A8A8A8A8A8A8 /* Assets.xcassets in Resources */,
+				A7A7A7A7A7A7A7A7A7A7A7A7 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3F3F3F3F3F3F3F3F3F3F3F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3A3A3A3A3A3A3A3A3A3A3A3 /* MainViewController.swift in Sources */,
+				A1A1A1A1A1A1A1A1A1A1A1A1 /* AppDelegate.swift in Sources */,
+				A4A4A4A4A4A4A4A4A4A4A4A4 /* ConfigurationViewController.swift in Sources */,
+				A5A5A5A5A5A5A5A5A5A5A5A5 /* PingService.swift in Sources */,
+				A6A6A6A6A6A6A6A6A6A6A6A6 /* PingConfiguration.swift in Sources */,
+				A2A2A2A2A2A2A2A2A2A2A2A2 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B7B7B7B7B7B7B7B7B7B7B7B7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B7B7B7B7B7B7B7B7B7B7B7B7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B9B9B9B9B9B9B9B9B9B9B9B9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B9B9B9B9B9B9B9B9B9B9B9B9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		H1H1H1H1H1H1H1H1H1H1H1H1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		H2H2H2H2H2H2H2H2H2H2H2H2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		H3H3H3H3H3H3H3H3H3H3H3H3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Pinger/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vitscoreboard.pinger;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		H4H4H4H4H4H4H4H4H4H4H4H4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Pinger/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vitscoreboard.pinger;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		G2G2G2G2G2G2G2G2G2G2G2G2 /* Build configuration list for PBXProject "Pinger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				H1H1H1H1H1H1H1H1H1H1H1H1 /* Debug */,
+				H2H2H2H2H2H2H2H2H2H2H2H2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2F2F2F2F2F2F2F2F2F2F2F2 /* Build configuration list for PBXNativeTarget "Pinger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				H3H3H3H3H3H3H3H3H3H3H3H3 /* Debug */,
+				H4H4H4H4H4H4H4H4H4H4H4H4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = G1G1G1G1G1G1G1G1G1G1G1G1 /* Project object */;
+}
+PBXEOF
+        
+        # Create scheme file
+        mkdir -p "Pinger Project/Pinger.xcodeproj/xcshareddata/xcschemes"
+        cat > "Pinger Project/Pinger.xcodeproj/xcshareddata/xcschemes/Pinger.xcscheme" << 'SCHEMEEOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1500"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F1F1F1F1F1F1F1F1F1F1F1F1"
+               BuildableName = "Pinger.app"
+               BlueprintName = "Pinger"
+               ReferencedContainer = "container:Pinger.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F1F1F1F1F1F1F1F1F1F1F1F1"
+            BuildableName = "Pinger.app"
+            BlueprintName = "Pinger"
+            ReferencedContainer = "container:Pinger.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F1F1F1F1F1F1F1F1F1F1F1F1"
+            BuildableName = "Pinger.app"
+            BlueprintName = "Pinger"
+            ReferencedContainer = "container:Pinger.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
+SCHEMEEOF
+
+    - name: Build the Fixed Project
       run: |
-        echo "=== Project Files ==="
+        cd "Pinger Project"
+        
+        echo "=== Verifying Project Structure ==="
         ls -la
-        echo "=== Xcode Project Contents ==="
-        ls -la Pinger.xcodeproj/ || echo "Project directory not found"
+        echo "=== Pinger Directory ==="
+        ls -la Pinger/
+        echo "=== Project File ==="
+        ls -la Pinger.xcodeproj/
         
-    - name: List available schemes
-      run: |
-        echo "=== Available Schemes ==="
-        xcodebuild -project Pinger.xcodeproj -list || echo "Failed to list schemes - continuing anyway"
-        
-    - name: Build for iOS Simulator (No Code Signing Required)
-      run: |
-        echo "=== Building for iOS Simulator ==="
-        set -e
-        xcodebuild clean build \
-                   -project Pinger.xcodeproj \
+        echo "=== Building Project ==="
+        xcodebuild -project Pinger.xcodeproj \
                    -scheme Pinger \
                    -configuration Release \
                    -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
-                   -derivedDataPath build/DerivedData \
+                   -derivedDataPath ../build/DerivedData \
                    CODE_SIGN_IDENTITY="" \
                    CODE_SIGNING_REQUIRED=NO \
+                   CODE_SIGNING_ALLOWED=NO \
                    DEVELOPMENT_TEAM="" \
-                   PROVISIONING_PROFILE="" \
-                   -verbose || echo "Build failed, trying alternative approach"
-    
-    - name: Create App Package for Appetize
+                   PROVISIONING_PROFILE_SPECIFIER="" \
+                   -verbose
+                   
+    - name: Package the Built App
       run: |
-        echo "=== Creating App Package ==="
-        # Find the built app
-        find build -name "*.app" -type d || echo "No .app found"
+        echo "=== Looking for Built App ==="
+        find build -name "*.app" -type d
         
-        # Try to find and copy the app
         if [ -d "build/DerivedData/Build/Products/Release-iphonesimulator/Pinger.app" ]; then
+          echo "SUCCESS: Found built app!"
+          
+          # Copy app to build root
           cp -R "build/DerivedData/Build/Products/Release-iphonesimulator/Pinger.app" build/
+          
+          # Create IPA structure
+          mkdir -p build/Payload
+          cp -R build/Pinger.app build/Payload/
+          
+          # Create IPA file
           cd build
-          zip -r Pinger-iOS-Simulator.zip Pinger.app
-          echo "Created Pinger-iOS-Simulator.zip"
+          zip -r Pinger-iOS-Real.ipa Payload/
+          zip -r Pinger-iOS-App.zip Pinger.app/
+          
+          echo "=== SUCCESS: Built Real iOS App ==="
+          ls -lh *.ipa *.zip
+          du -sh Pinger.app
+          
         else
-          echo "App not found, creating dummy package for testing"
-          mkdir -p build/Pinger.app
-          echo "Dummy app for testing" > build/Pinger.app/Info.plist
-          cd build
-          zip -r Pinger-iOS-Simulator.zip Pinger.app
+          echo "ERROR: App still not found after fixed build"
+          echo "=== Build Output Structure ==="
+          find build -type f -name "*.app" -o -name "*.o" -o -name "*.dylib" | head -20
+          exit 1
         fi
     
     - name: Upload iOS App for Appetize
