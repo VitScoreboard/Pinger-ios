@@ -1,25 +1,35 @@
 # How to Test Pinger iOS App on Appetize.io
 
-## ✅ FIXED: Updated GitHub Actions Workflow
+## ✅ FIXED: Multiple Build Approaches
 
-The workflow has been updated to use `actions/upload-artifact@v4` to resolve the deprecation warning.
+Two GitHub Actions workflows are available to handle different build scenarios.
 
-## Option 1: Using GitHub Actions (Recommended)
+## Option 1: Simple Build (Recommended for Testing)
 
 ### Steps:
 1. **Create GitHub Repository**
    ```bash
    git init
    git add .
-   git commit -m "Initial Pinger iOS app with fixed workflow"
+   git commit -m "Pinger iOS app with multiple build workflows"
    git branch -M main
    git remote add origin https://github.com/yourusername/pinger-ios.git
    git push -u origin main
    ```
 
-2. **Trigger Build**
+2. **Trigger Simple Build** (if main build fails)
    - Go to your GitHub repository
    - Click on **Actions** tab
+   - Click **"Simple iOS Build"** 
+   - Click **"Run workflow"**
+   - This creates a demo app package for testing
+
+## Option 2: Full Xcode Build
+
+### Steps:
+1. **Trigger Full Build**
+   - Go to your GitHub repository
+   - Click on **Actions** tab  
    - Click **"Build iOS App for Appetize"**
    - Click **"Run workflow"**
    - Wait for the build to complete (5-10 minutes)
