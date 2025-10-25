@@ -36,17 +36,17 @@ jobs:
         mkdir -p "build/Pinger.app/_CodeSignature"
         
         # Create executable binary
-        cat > "build/Pinger.app/Pinger" << 'EOF'
-#!/bin/bash
-echo "Pinger iOS App - URL Monitoring Tool"
-echo "Built on: $(date)"
-echo "This app monitors URLs and sends notifications"
-exit 0
-EOF
+        cat > "build/Pinger.app/Pinger" << 'BINEOF'
+        #!/bin/bash
+        echo "Pinger iOS App - URL Monitoring Tool"
+        echo "Built on: $(date)"
+        echo "This app monitors URLs and sends notifications"
+        exit 0
+        BINEOF
         chmod +x "build/Pinger.app/Pinger"
         
         # Create comprehensive Info.plist
-        cat > "build/Pinger.app/Info.plist" << 'EOF'
+        cat > "build/Pinger.app/Info.plist" << 'PLISTEOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -123,7 +123,7 @@ EOF
     </array>
 </dict>
 </plist>
-EOF
+PLISTEOF
 
         # Copy source files into app bundle as resources
         mkdir -p "build/Pinger.app/SourceCode"
@@ -139,7 +139,7 @@ EOF
         echo "APPLNULL" > "build/Pinger.app/PkgInfo"
         
         # Create dummy code signature (for simulator)
-        cat > "build/Pinger.app/_CodeSignature/CodeResources" << 'EOF'
+        cat > "build/Pinger.app/_CodeSignature/CodeResources" << 'CODEEOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -163,10 +163,10 @@ EOF
     </dict>
 </dict>
 </plist>
-EOF
+CODEEOF
 
         # Add some realistic file size by adding documentation
-        cat > "build/Pinger.app/README.txt" << 'EOF'
+        cat > "build/Pinger.app/README.txt" << 'READMEEOF'
 PINGER iOS APPLICATION
 =====================
 
@@ -203,7 +203,7 @@ This app demonstrates modern iOS development patterns including:
 - Clean architecture separation
 
 Perfect for monitoring web services, APIs, or any HTTP endpoints!
-EOF
+READMEEOF
 
         # Create additional content to increase file size
         for i in {1..100}; do
