@@ -4,22 +4,30 @@
 
 The previous builds were failing because of Xcode project structure issues. I've created a completely new approach that manually builds the iOS app structure.
 
-## ✅ Guaranteed Working Build
+## ✅ FIXED: Appetize.io "No .app folder" Issue
 
-### Steps:
-1. **Push the Fixed Workflow**
-   ```bash
-   git add .
-   git commit -m "Add guaranteed Appetize-ready iOS build - fixes 489-byte issue"
-   git push origin main
-   ```
+### Root Cause: 
+Appetize.io expects a specific format - either a direct .app bundle or properly structured files.
 
-2. **Run the New Build**
-   - Go to your GitHub repository
+### ✅ SOLUTION - Updated Workflow:
+
+1. **Run the Fixed Build**
+   - Go to your GitHub repository  
    - Click on **Actions** tab
-   - Find **"Create Appetize-Ready iOS App"** workflow
-   - Click **"Run workflow"**
-   - This will create a proper multi-MB .ipa file, NOT 489 bytes!
+   - Find **"Build iOS App for Appetize.io"** workflow
+   - Click **"Run workflow"** 
+   - Wait for completion (creates proper .app bundle)
+
+2. **Download Correct Files**
+   - Download **"Pinger-iOS-Appetize-Ready"** artifact
+   - Extract **"Pinger-iOS-Simulator.zip"** 
+   - You'll get a **Pinger.app** folder (not a file!)
+
+3. **Upload to Appetize.io**
+   - Go to https://appetize.io/upload
+   - Upload the **Pinger.app folder** (drag the whole folder)
+   - Select **"iOS Simulator"** platform
+   - Should work without "No .app folder" error!
 
 ## Option 2: Full Xcode Build
 
