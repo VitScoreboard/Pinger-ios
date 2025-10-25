@@ -1,0 +1,70 @@
+name: Build iOS App for Appetize
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Create ExportOptions.plist
+      run: |
+        cat << EOF > ExportOptions.plist
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>thinning</key>
+            <string>&lt;none&gt;</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Build Archive
+      run: |
+        xcodebuild -project Pinger.xcodeproj \
+                   -scheme Pinger \
+                   -configuration Release \
+                   -destination generic/platform=iOS \
+                   -archivePath $PWD/build/Pinger.xcarchive \
+                   archive \
+                   CODE_SIGN_IDENTITY="" \
+                   CODE_SIGNING_REQUIRED=NO \
+                   CODE_SIGNING_ALLOWED=NO
+    
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+                   -archivePath $PWD/build/Pinger.xcarchive \
+                   -exportPath $PWD/build \
+                   -exportOptionsPlist ExportOptions.plist \
+                   -allowProvisioningUpdates
+    
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Pinger-iOS-App
+        path: build/*.ipa
+        
+    - name: Upload Archive for Appetize
+      uses: actions/upload-artifact@v3  
+      with:
+        name: Pinger-Archive
+        path: build/Pinger.xcarchive
