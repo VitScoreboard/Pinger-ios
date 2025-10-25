@@ -37,6 +37,12 @@ jobs:
         </plist>
         EOF
     
+    - name: Create build directory
+      run: mkdir -p build
+    
+    - name: List available schemes
+      run: xcodebuild -project Pinger.xcodeproj -list
+    
     - name: Build Archive
       run: |
         xcodebuild -project Pinger.xcodeproj \
@@ -47,7 +53,8 @@ jobs:
                    archive \
                    CODE_SIGN_IDENTITY="" \
                    CODE_SIGNING_REQUIRED=NO \
-                   CODE_SIGNING_ALLOWED=NO
+                   CODE_SIGNING_ALLOWED=NO \
+                   -quiet
     
     - name: Export IPA
       run: |
@@ -55,16 +62,19 @@ jobs:
                    -archivePath $PWD/build/Pinger.xcarchive \
                    -exportPath $PWD/build \
                    -exportOptionsPlist ExportOptions.plist \
-                   -allowProvisioningUpdates
+                   -allowProvisioningUpdates \
+                   -quiet
     
     - name: Upload IPA Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Pinger-iOS-App
         path: build/*.ipa
+        retention-days: 30
         
     - name: Upload Archive for Appetize
-      uses: actions/upload-artifact@v3  
+      uses: actions/upload-artifact@v4  
       with:
         name: Pinger-Archive
         path: build/Pinger.xcarchive
+        retention-days: 30

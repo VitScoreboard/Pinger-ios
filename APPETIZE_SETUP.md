@@ -1,5 +1,9 @@
 # How to Test Pinger iOS App on Appetize.io
 
+## ✅ FIXED: Updated GitHub Actions Workflow
+
+The workflow has been updated to use `actions/upload-artifact@v4` to resolve the deprecation warning.
+
 ## Option 1: Using GitHub Actions (Recommended)
 
 ### Steps:
@@ -7,7 +11,7 @@
    ```bash
    git init
    git add .
-   git commit -m "Initial Pinger iOS app"
+   git commit -m "Initial Pinger iOS app with fixed workflow"
    git branch -M main
    git remote add origin https://github.com/yourusername/pinger-ios.git
    git push -u origin main
